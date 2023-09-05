@@ -19,5 +19,16 @@ module.exports = {
     updateSenderById: async (req, res) => {
         let updatedSender = await Sender.findByIdAndUpdate(req.body.id, { name: req.body.name }, { new: true });
         res.json(updatedSender);
-    }
+    },
+    addParcelToSender: async (req, res) => {
+        let newParcel = new Parcel(req.body.parcel);
+        newParcel.sender = req.body.senderId;
+        await newParcel.save();
+    
+        let sender = await Sender.findById(req.body.senderId);
+        sender.parcels.push(newParcel);
+        await sender.save();
+    
+        res.json(newParcel);
+    }    
 };
